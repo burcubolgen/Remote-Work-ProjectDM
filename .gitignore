@@ -5,3 +5,7 @@
 *.html
 *_files/
 /.quarto/
+data/*.xlsx
+data/*.zip
+data/*.parquet
+data/base-cc-emploi-pop-active-2017.CSV

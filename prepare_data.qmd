@@ -1,0 +1,55 @@
+---
+title: "Data preparation"
+format: html
+---
+
+## Packages
+
+```{r}
+library(readxl)
+library(readr)
+library(arrow)
+library(dplyr)
+```
+
+## ARCEP fibre
+
+```{r}
+fibre <- read_excel("data/2026t2-obs-hd-thd-deploiement-vf.xlsx",
+                    sheet = "Communes", skip = 4, col_types = "text")
+write_csv(fibre, "data/arcep_fibre_communes.csv")
+dim(fibre)
+```
+
+## COG
+
+```{r}
+cog <- read_excel("data/table_passage_annuelle_2026.xlsx",
+                  skip = 5, col_types = "text")
+write_csv(cog, "data/cog_table_passage_2026.csv")
+head(cog)
+```
+
+## Census 2017
+
+```{r}
+rp <- read_delim("data/base-cc-emploi-pop-active-2017.CSV",
+                 delim = ";", col_types = cols(.default = "c"))
+rp2017 <- rp |>
+  select(CODGEO, starts_with("C17_ACTOCC1564"))
+write_csv(rp2017, "data/rp2017_emploi_commune.csv")
+head(rp2017)
+```
+
+## SIRENE
+
+```{r}
+sirene <- open_dataset("data/stock-stocketablissement-parquet.parquet") |>
+  select(codeCommuneEtablissement, dateCreationEtablissement) |>
+  collect() |>
+  mutate(year = as.integer(substr(as.character(dateCreationEtablissement), 1, 4))) |>
+  filter(year >= 2014, !is.na(codeCommuneEtablissement)) |>
+  count(codeCommuneEtablissement, year, name = "n_creations")
+write_csv(sirene, "data/sirene_creations_by_municipality_year.csv")
+head(sirene)
+```
