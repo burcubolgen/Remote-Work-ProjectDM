@@ -1,0 +1,14 @@
+---
+title: "Did Remote Work Revive Small French Municipalities? Population and Housing Market Dynamics after the Pandemic"
+author: "Burcu Bölgen & Laura Moldovanu"
+format: html
+editor: visual
+---
+
+
+## Introduction
+
+This project asks whether small French municipalities that were better suited to remote work before the pandemic experienced stronger residential inflows, faster housing price growth and more business creation after COVID-19 than otherwise comparable municipalities.
+
+The pandemic led to a rapid and lasting expansion of remote work, which may have altered the relative attractiveness of large cities compared with small towns and rural areas. Population growth in these areas, however, does not by itself indicate that remote work was the driving factor. Our approach is to compare municipalities according to their suitability for remote work before 2020, which we measure through the occupational structure of their residents and their access to fibre broadband. If remote work played a role, the post-pandemic changes should be more pronounced in municipalities that combined a large share of teleworkable occupations with good connectivity.
+
