@@ -5,10 +5,106 @@ format: html
 editor: visual
 ---
 
-
 ## Introduction
 
 This project asks whether small French municipalities that were better suited to remote work before the pandemic experienced stronger residential inflows, faster housing price growth and more business creation after COVID-19 than otherwise comparable municipalities.
 
 The pandemic led to a rapid and lasting expansion of remote work, which may have altered the relative attractiveness of large cities compared with small towns and rural areas. Population growth in these areas, however, does not by itself indicate that remote work was the driving factor. Our approach is to compare municipalities according to their suitability for remote work before 2020, which we measure through the occupational structure of their residents and their access to fibre broadband. If remote work played a role, the post-pandemic changes should be more pronounced in municipalities that combined a large share of teleworkable occupations with good connectivity.
 
+## Data cleaning
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+### Municipality codes
+
+```{r}
+cog <- read_csv("data/cog_table_passage_2026.csv", col_types = cols(.default = "c")) |>
+  filter(NIVGEO == "COM")
+
+cog_map <- cog |>
+  select(starts_with("CODGEO_")) |>
+  pivot_longer(-CODGEO_2026, names_to = "year", values_to = "old_code",
+               names_prefix = "CODGEO_") |>
+  bind_rows(cog |> transmute(CODGEO_2026, year = "2026", old_code = CODGEO_2026)) |>
+  filter(!is.na(old_code)) |>
+  arrange(desc(year)) |>
+  distinct(old_code, .keep_all = TRUE) |>
+  select(old_code, code_2026 = CODGEO_2026)
+
+nrow(cog_map)
+n_distinct(cog_map$code_2026)
+```
+
+### Census 2017
+
+```{r}
+rp2017 <- read_csv("data/rp2017_emploi_commune.csv", col_types = cols(.default = "c")) |>
+  mutate(across(starts_with("C17"), as.numeric))
+
+telework_2017 <- rp2017 |>
+  inner_join(cog_map, by = c("CODGEO" = "old_code")) |>
+  group_by(code_2026) |>
+  summarise(employed_2017 = sum(C17_ACTOCC1564),
+            managers_interm_2017 = sum(C17_ACTOCC1564_CS3 + C17_ACTOCC1564_CS4)) |>
+  mutate(telework_index = if_else(employed_2017 > 0,
+                                  managers_interm_2017 / employed_2017, NA_real_))
+
+rp2017 |> anti_join(cog_map, by = c("CODGEO" = "old_code")) |> nrow()
+summary(telework_2017$telework_index)
+```
+
+### ARCEP fibre
+
+```{r}
+fibre <- read_csv("data/arcep_fibre_communes.csv", col_types = cols(.default = "c"))
+
+fibre_2019 <- fibre |>
+  transmute(code = `Code commune`,
+            premises_2026 = as.numeric(`Meilleure estimation des locaux T2 2026`),
+            fibre_premises_2019 = as.numeric(`T4 2019`)) |>
+  inner_join(cog_map, by = c("code" = "old_code")) |>
+  group_by(code_2026) |>
+  summarise(premises_2026 = sum(premises_2026),
+            fibre_premises_2019 = sum(fibre_premises_2019)) |>
+  mutate(fibre_share_2019 = if_else(premises_2026 > 0,
+                                    pmin(fibre_premises_2019 / premises_2026, 1), NA_real_))
+
+fibre |> anti_join(cog_map, by = c("Code commune" = "old_code")) |> nrow()
+summary(fibre_2019$fibre_share_2019)
+```
+
+### SIRENE
+
+```{r}
+sirene <- read_csv("data/sirene_creations_by_municipality_year.csv",
+                   col_types = cols(codeCommuneEtablissement = "c",
+                                    year = "i", n_creations = "i"))
+
+arm_map <- tibble(
+  old_code = c(sprintf("751%02d", 1:20), sprintf("6938%d", 1:9), sprintf("132%02d", 1:16)),
+  code_2026 = c(rep("75056", 20), rep("69123", 9), rep("13055", 16))
+)
+sirene_map <- bind_rows(cog_map, arm_map)
+
+sirene_clean <- sirene |>
+  filter(year <= 2025) |>
+  inner_join(sirene_map, by = c("codeCommuneEtablissement" = "old_code")) |>
+  group_by(code_2026, year) |>
+  summarise(n_creations = sum(n_creations), .groups = "drop")
+
+sirene |>
+  anti_join(sirene_map, by = c("codeCommuneEtablissement" = "old_code")) |>
+  summarise(unmatched_codes = n_distinct(codeCommuneEtablissement),
+            creations_lost = sum(n_creations))
+
+sirene |>
+  anti_join(sirene_map, by = c("codeCommuneEtablissement" = "old_code")) |>
+  group_by(codeCommuneEtablissement) |>
+  summarise(creations = sum(n_creations)) |>
+  arrange(desc(creations)) |>
+  head(10)
+```
