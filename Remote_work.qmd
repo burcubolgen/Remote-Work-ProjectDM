@@ -155,6 +155,17 @@ sirene |>
   head(10)
 ```
 
+### Summary of the cleaning and matching
+
+All sources are linked through the INSEE municipality code. Because French municipalities frequently merge, a code that existed in one year may no longer exist in another. Using the COG correspondence table, we built a list linking every municipality code that existed since 2003 (36716 codes) to its code in 2026 geography (34876 municipalities). Each source was then converted to 2026 codes and the values of merged municipalities were added together.
+
+For the 2017 census data, 45 codes could not be matched. These were the districts of Paris, Lyon and Marseille, which were listed separately even though the data also included the three cities as a whole. We therefore removed them. The remote-work index could not be calculated for 102 municipalities because they had no declared employed residents.
+
+For ARCEP fiber data, only 4 codes could not be matched. AT the end of 2019, more than half of the municipalities had no premises connected to fiber. This means that the fiber shared is often zero. For this reason, we could also use a simple indicator showing whether fiber was available or not.
+
+In the SIRENE data , establishments in Paris, Lyon and Marseille were identified by district. We assigned these districts to their respective cities to make the data consistent with the other sources. The other unmatched codes, representing around 27986new establishments, belong to overseas territories that are not included in the COG municipality list. These territories were excluded from the study. 
+Finally, we removed 2026, because the data for this year is incomplete.
+
 ## Main variables
 
 - `code_2026`: the INSEE code of municipality in 2026. This code is used to connect all the date from different sources.
