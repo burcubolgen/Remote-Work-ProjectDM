@@ -108,3 +108,15 @@ sirene |>
   arrange(desc(creations)) |>
   head(10)
 ```
+
+## Main variables
+
+- `code_2026`: the INSEE code of municipality in 2026. This code is used to connect all the date from different sources.
+- `employed_2017`: the number of people aged 15 to 64 who had a job in the municipality in 2017.
+- `managers_interm_2017`: the number of employed people who were managers or had intermediate-level jobs in 2017. These types of jobs are more likely to allow remote work.
+- `telework_index`: the percentage of employed people who were managers or had intermediate-level jobs in 2017. It shows how suitable the municipality was for remote work before the pandemic.
+- `premises_2026`: the estimated total number of premises (homes and business buildings) in the municipality, according to ARCEP.
+- `fibre_premises_2019`: the number of premises that had access to fiber broadband at the end of 2019.
+- `fibre_share_2019`: the percentage of premises that could access fiber broadband in 2019. It shows how easy it was to work remotely from that municipality before the pandemic.
+- `year`: the year when whe establishments were created, between 2014 and 2025.
+- `n_creations`: the number of the new establishments created in the municipality each ear, based on data from the SIRENE register.
