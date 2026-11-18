@@ -11,6 +11,52 @@ This project asks whether small French municipalities that were better suited to
 
 The pandemic led to a rapid and lasting expansion of remote work, which may have altered the relative attractiveness of large cities compared with small towns and rural areas. Population growth in these areas, however, does not by itself indicate that remote work was the driving factor. Our approach is to compare municipalities according to their suitability for remote work before 2020, which we measure through the occupational structure of their residents and their access to fibre broadband. If remote work played a role, the post-pandemic changes should be more pronounced in municipalities that combined a large share of teleworkable occupations with good connectivity.
 
+## Data files
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+### ARCEP fibre
+
+```{r}
+fibre_raw <- read_csv("data/arcep_fibre_communes.csv", col_types = cols(.default = "c"))
+tibble(file = "arcep_fibre_communes.csv",
+       rows = nrow(fibre_raw),
+       columns = ncol(fibre_raw)) |>
+  knitr::kable()
+```
+
+### COG correspondence table
+
+```{r}
+cog_raw <- read_csv("data/cog_table_passage_2026.csv", col_types = cols(.default = "c"))
+tibble(file = "cog_table_passage_2026.csv",
+       rows = nrow(cog_raw),
+       columns = ncol(cog_raw)) |>
+  knitr::kable()
+```
+### Census 2017
+
+```{r}
+rp_raw <- read_csv("data/rp2017_emploi_commune.csv", col_types = cols(.default = "c"))
+tibble(file = "rp2017_emploi_commune.csv",
+       rows = nrow(rp_raw),
+       columns = ncol(rp_raw)) |>
+  knitr::kable()
+```
+
+### Sirene
+
+```{r}
+sirene_raw <- read_csv("data/sirene_creations_by_municipality_year.csv", col_types = cols(.default = "c"))
+tibble(file = "sirene_creations_by_municipality_year.csv",
+       rows = nrow(sirene_raw),
+       columns = ncol(sirene_raw)) |>
+  knitr::kable()
+```
+
 ## Data cleaning
 
 ```{r}
