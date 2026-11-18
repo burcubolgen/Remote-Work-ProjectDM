@@ -175,5 +175,21 @@ Finally, we removed 2026, because the data for this year is incomplete.
 - `premises_2026`: the estimated total number of premises (homes and business buildings) in the municipality, according to ARCEP.
 - `fibre_premises_2019`: the number of premises that had access to fiber broadband at the end of 2019.
 - `fibre_share_2019`: the percentage of premises that could access fiber broadband in 2019. It shows how easy it was to work remotely from that municipality before the pandemic.
-- `year`: the year when whe establishments were created, between 2014 and 2025.
-- `n_creations`: the number of the new establishments created in the municipality each ear, based on data from the SIRENE register.
+- `year`: the year when we establishments were created, between 2014 and 2025.
+- `n_creations`: the number of the new establishments created in the municipality each year, based on data from the SIRENE register.
+
+## Research question
+
+Did small French municipalities that were better suited to remote work before the pandemic experience stronger population growth, faster housing price increases and more business creation after COVID-19 than otherwise comparable municipalities?
+
+The COVID-19 pandemic significantly changed the way many people work. During the 2020 lockdowns, employees and companies realised that a large number of jobs could be done remotely. As a result, remote and hybrid work became more common, even after pandemic. This change may have influenced people's decisions about where to live. Since employees no longer have to commute every day, smaller towns and rural areas may have become more attractive because of lower housing costs, more space and a better quality of life. This also raised the question of whether people started leaving large cities, especially Paris, in favour of smaller municipalities.
+
+However, population growth in smaller municipalities cannot automatically be linked to remote work. Some areas were already experiencing demographic changes before the pandemic. Therefore, this study examines whether municipalities that were better suited to remote work before 2020 experienced stronger changes after the pandemic.
+
+We measure the suitability for remote work using two indicators. The first is the share of managers and intermediate-level workers in the 2017 census, as these occupation are generally more likely to allow remote work. The second is the fiber broadband availability at the end of 2019, since a reliable internet connection is essential for working remotely. Both indicator refer to the period before the pandemic, which allows us to avoid measuring changes caused by COVID-19.
+
+The analysis focuses on three outcomes. First, population growth, to understand whether these municipalities attracted more residents. Second, changes in housing prices measured by the median price per square meter, to identify possible increases in housing demand. Third, the number of new establishments created each year, to examine whether remote work may have contributed to local economic activity.
+
+The study focuses on municipalities with fewer that 10000 inhabitants in mainland France. We compare the pre-pandemic period(2014-2018) with the post-pandemic period (2021-2025), excluding 2019 and 2020 as transition years. We also control for differences between municipalities, including population size, regional trends, rural or urban characteristics and distance from large cities.
+
+This research is relevant for a public policy perspective. If remote work helped smaller municipalities attract residents and businesses, investments in broadband infrastructure and transport could support the development of rural areas. However, increased housing demand could also lead to higher prices, making these municipalities less affordable for their existing residents.
