@@ -37,6 +37,64 @@ The real estate market is captured by the dataset “Indicateurs immobiliers par
 The business creation dataset provided by SIRENE lists all of the French establishments with their creation date and their commune code. We use this data to count the establishments created in each commune over different periods to obtain a measure of local economic dynamism before and after the pandemic.
 
 
+## Data information tables
+
+```{r}
+#| include: false
+library(readr)
+library(dplyr)
+library(knitr)
+library(here)
+```
+
+#### Official Geographic Code (COG)
+```{r}
+path_cog <- here("data", "cog_2026.csv")
+cog <- read_csv(path_cog, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_cog),
+            format(nrow(cog), big.mark = " "),
+            as.character(ncol(cog))
+            )
+) |>
+  kable(caption = "cog_2026.csv information table")
+```
+
+#### Historical municipal populations
+```{r}
+#| message: false
+path_pop <- here("data", "population_historique.csv")
+pop <- read_csv2(path_pop, skip = 5, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_pop),
+            format(nrow(pop), big.mark = " "),
+            as.character(ncol(pop)))
+) |>
+  kable(caption = "Historical municipal populations data information table")
+```
+
+
+#### Train stations
+```{r}
+#| message: false
+path_gares <- here("data", "gares.csv")
+gares <- read_csv2(path_gares, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_gares),
+            format(nrow(gares), big.mark = " "),
+            as.character(ncol(gares)))
+) |>
+  kable(caption = "Train stations data information table")
+```
+
+
+
 
 ## Data files
 
