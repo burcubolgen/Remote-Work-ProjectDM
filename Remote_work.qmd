@@ -11,16 +11,42 @@ editor: visual
 
 ### Links to the data sources and reproduction of the data selection
 
-- **ARCEP fiber deployment**: <https://www.data.gouv.fr/fr/datasets/le-marche-du-haut-et-tres-haut-debit-fixe-deploiements/>. Downloaded the file `2026t2-obs-hd-thd-deploiement-vf.xlsx` (second quarter of 2026) and kept only the sheet *Communes*.
-- **Census 2017 (INSEE)**: <https://www.insee.fr/fr/statistiques/4515500>. Downloaded the CSV file *Emploi - population active en 2017 - Commune - France hors Mayotte* and kept the municipality code and the number of employed residents aged 15–64 by socio-professional category (variables `C17_ACTOCC1564...`).
-- **SIRENE (INSEE)**: <https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/>. Downloaded the file *Sirene : Fichier StockEtablissement – 01 novembre 2026 (format parquet)* and counted the establishments created in each municipality and year since 2014.
-- **COG correspondence table (INSEE)**: <https://www.insee.fr/fr/information/7671867>. Downloaded the file *Table de passage annuelle 2026*.
+**1) The Official Geopgraphic Code (COG), INSEE**
 
-## Introduction
+<https://www.insee.fr/fr/information/8740222> ---> The page offers several files. We downloaded and  the CSV file *Liste des communes* as `m_vmt_commune_2026.csv` and renamed `cog_2026`.
 
-This project asks whether small French municipalities that were better suited to remote work before the pandemic experienced stronger residential inflows, faster housing price growth and more business creation after COVID-19 than otherwise comparable municipalities.
+**2) COG correspondence table, INSEE** 
 
-The pandemic led to a rapid and lasting expansion of remote work, which may have altered the relative attractiveness of large cities compared with small towns and rural areas. Population growth in these areas, however, does not by itself indicate that remote work was the driving factor. Our approach is to compare municipalities according to their suitability for remote work before 2020, which we measure through the occupational structure of their residents and their access to fibre broadband. If remote work played a role, the post-pandemic changes should be more pronounced in municipalities that combined a large share of teleworkable occupations with good connectivity.
+<https://www.insee.fr/fr/information/7671867> ---> We downloaded the file *Table de passage annuelle 2026*.
+
+**3) Historical municipal populations, INSEE**
+
+<https://www.insee.fr/fr/statistiques/3698339> ---> We downloaded the XLSX file and exported the first sheet, which contains the population data, as a semicolon-separated CSV file, saved as `population_historique.csv`.
+
+**4) ARCEP fiber deployment**
+
+<https://www.data.gouv.fr/fr/datasets/le-marche-du-haut-et-tres-haut-debit-fixe-deploiements/> ---> We downloaded the file `2026t2-obs-hd-thd-deploiement-vf.xlsx` (second quarter of 2026) and kept only the sheet *Communes*. 
+
+**5) List of train stations**
+
+<https://www.data.gouv.fr/datasets/liste-des-gares?resource_id=d22ba593-90a4-4725-977c-095d1f654d28>  
+
+**6) Employment of active residents, INSEE**
+
+<https://www.insee.fr/fr/statistiques/4515500> ---> Downloaded the CSV file *Emploi - population active en 2017 - Commune - France hors Mayotte* and kept the municipality code and the number of employed residents aged 15–64 by socio-professional category (variables `C17_ACTOCC1564...`).
+
+**7) Real estate indicators by municipality and by year (prices and volumes for the 2014–2024 period)**
+
+- <https://www.data.gouv.fr/datasets/indicateurs-immobiliers-par-commune-et-par-annee-prix-et-volumes-sur-la-periode-2014-2024?resource_id=084be72a-f586-47f7-92e6-02245e835934> (2019)
+
+- <https://www.data.gouv.fr/datasets/indicateurs-immobiliers-par-commune-et-par-annee-prix-et-volumes-sur-la-periode-2014-2024?resource_id=0350f9a1-04ba-4eb1-9637-d642c9d367d7> (2022)
+
+- <https://www.data.gouv.fr/datasets/indicateurs-immobiliers-par-commune-et-par-annee-prix-et-volumes-sur-la-periode-2014-2024?resource_id=d7881695-1cb5-44c1-900c-00c7158ab766> (2023)
+
+**8) Business' and their establishment, SIRENE**
+
+<https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/> ---> Downloaded the file *Sirene : Fichier StockEtablissement – 01 novembre 2026 (format parquet)* and counted the establishments created in each municipality and year since 2014.
+
 
 
 ## Description of the sources
