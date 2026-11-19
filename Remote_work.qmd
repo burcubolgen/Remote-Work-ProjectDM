@@ -9,6 +9,12 @@ editor: visual
 
 <https://github.com/burcubolgen/Remote-Work-ProjectDM>
 
+### Links to the data sources and reproduction of the data selection
+
+- **ARCEP fiber deployment**: <https://www.data.gouv.fr/fr/datasets/le-marche-du-haut-et-tres-haut-debit-fixe-deploiements/>. Downloaded the file `2026t2-obs-hd-thd-deploiement-vf.xlsx` (second quarter of 2026) and kept only the sheet *Communes*.
+- **Census 2017 (INSEE)**: <https://www.insee.fr/fr/statistiques/4515500>. Downloaded the CSV file *Emploi - population active en 2017 - Commune - France hors Mayotte* and kept the municipality code and the number of employed residents aged 15–64 by socio-professional category (variables `C17_ACTOCC1564...`).
+- **SIRENE (INSEE)**: <https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/>. Downloaded the file *Sirene : Fichier StockEtablissement – 01 novembre 2026 (format parquet)* and counted the establishments created in each municipality and year since 2014.
+- **COG correspondence table (INSEE)**: <https://www.insee.fr/fr/information/7671867>. Downloaded the file *Table de passage annuelle 2026*.
 
 ## Introduction
 
