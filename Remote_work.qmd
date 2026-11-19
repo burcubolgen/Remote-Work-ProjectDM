@@ -48,6 +48,7 @@ library(here)
 ```
 
 #### Official Geographic Code (COG)
+
 ```{r}
 path_cog <- here("data", "cog_2026.csv")
 cog <- read_csv(path_cog, show_col_types = FALSE)
@@ -63,6 +64,7 @@ tibble(
 ```
 
 #### Historical municipal populations
+
 ```{r}
 #| message: false
 path_pop <- here("data", "population_historique.csv")
@@ -79,6 +81,7 @@ tibble(
 
 
 #### Train stations
+
 ```{r}
 #| message: false
 path_gares <- here("data", "gares.csv")
@@ -93,6 +96,22 @@ tibble(
   kable(caption = "Train stations data information table")
 ```
 
+
+#### DVF 2019
+
+```{r}
+#| message: false
+path_dvf2019 <- here("data", "dvf2019.csv")
+dvf2019 <- read_csv(path_dvf2019, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_dvf2019),
+            format(nrow(dvf2019), big.mark = " "),
+            as.character(ncol(dvf2019)))
+) |>
+  kable(caption = "DVF 2019 data information table")
+```
 
 
 
