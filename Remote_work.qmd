@@ -94,52 +94,67 @@ tibble(
 ```
 
 
-
-
-## Data files
-
-```{r}
-library(readr)
-library(dplyr)
-```
-
 ### ARCEP fibre
 
 ```{r}
-fibre_raw <- read_csv("data/arcep_fibre_communes.csv", col_types = cols(.default = "c"))
-tibble(file = "arcep_fibre_communes.csv",
-       rows = nrow(fibre_raw),
-       columns = ncol(fibre_raw)) |>
-  knitr::kable()
+#| message: false
+path_fibre <- here("data", "arcep_fibre_communes.csv")
+fibre_raw <- read_csv(path_fibre, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_fibre),
+            format(nrow(fibre_raw), big.mark = " "),
+            as.character(ncol(fibre_raw)))
+) |>
+  kable(caption = "ARCEP fibre deployment data information table")
 ```
 
 ### COG correspondence table
 
 ```{r}
-cog_raw <- read_csv("data/cog_table_passage_2026.csv", col_types = cols(.default = "c"))
-tibble(file = "cog_table_passage_2026.csv",
-       rows = nrow(cog_raw),
-       columns = ncol(cog_raw)) |>
-  knitr::kable()
+#| message: false
+path_cog <- here("data", "cog_table_passage_2026.csv")
+cog_raw <- read_csv(path_cog, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_cog),
+            format(nrow(cog_raw), big.mark = " "),
+            as.character(ncol(cog_raw)))
+) |>
+  kable(caption = "COG correspondence table information table")
 ```
 ### Census 2017
 
 ```{r}
-rp_raw <- read_csv("data/rp2017_emploi_commune.csv", col_types = cols(.default = "c"))
-tibble(file = "rp2017_emploi_commune.csv",
-       rows = nrow(rp_raw),
-       columns = ncol(rp_raw)) |>
-  knitr::kable()
+#| message: false
+path_rp <- here("data", "rp2017_emploi_commune.csv")
+rp_raw <- read_csv(path_rp, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_rp),
+            format(nrow(rp_raw), big.mark = " "),
+            as.character(ncol(rp_raw)))
+) |>
+  kable(caption = "Census 2017 employment data information table")
 ```
 
 ### Sirene
 
 ```{r}
-sirene_raw <- read_csv("data/sirene_creations_by_municipality_year.csv", col_types = cols(.default = "c"))
-tibble(file = "sirene_creations_by_municipality_year.csv",
-       rows = nrow(sirene_raw),
-       columns = ncol(sirene_raw)) |>
-  knitr::kable()
+#| message: false
+path_sirene <- here("data", "sirene_creations_by_municipality_year.csv")
+sirene_raw <- read_csv(path_sirene, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_sirene),
+            format(nrow(sirene_raw), big.mark = " "),
+            as.character(ncol(sirene_raw)))
+) |>
+  kable(caption = "SIRENE business creations data information table")
 ```
 
 ## Data cleaning
