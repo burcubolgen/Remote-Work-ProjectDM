@@ -97,7 +97,7 @@ tibble(
 ```
 
 
-#### DVF 2019
+#### DVF
 
 ```{r}
 #| message: false
@@ -113,6 +113,33 @@ tibble(
   kable(caption = "DVF 2019 data information table")
 ```
 
+```{r}
+#| message: false
+path_dvf2022 <- here("data", "dvf2022.csv")
+dvf2022 <- read_csv(path_dvf2022, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_dvf2022),
+            format(nrow(dvf2022), big.mark = " "),
+            as.character(ncol(dvf2022)))
+) |>
+  kable(caption = "DVF 2022 data information table")
+```
+
+```{r}
+#| message: false
+path_dvf2023 <- here("data", "dvf2023.csv")
+dvf2023 <- read_csv(path_dvf2023, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_dvf2023),
+            format(nrow(dvf2023), big.mark = " "),
+            as.character(ncol(dvf2023)))
+) |>
+  kable(caption = "DVF 2023 data information table")
+```
 
 
 ## Data files
