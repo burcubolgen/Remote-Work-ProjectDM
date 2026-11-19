@@ -380,3 +380,26 @@ The analysis focuses on three outcomes. First, population growth, to understand 
 The study focuses on municipalities with fewer that 10000 inhabitants in mainland France. We compare the pre-pandemic period(2014-2018) with the post-pandemic period (2021-2025), excluding 2020 as transition year. We also control for differences between municipalities, including population size, regional trends, rural or urban characteristics and distance from large cities.
 
 This research is relevant for a public policy perspective. If remote work helped smaller municipalities attract residents and businesses, investments in broadband infrastructure and transport could support the development of rural areas. However, increased housing demand could also lead to higher prices, making these municipalities less affordable for their existing residents.
+
+## Graphs
+
+### Business creations
+
+```{r}
+#| message: false
+library(ggplot2)
+
+sirene_groups <- sirene_clean |>
+  inner_join(telework_2017, by = "code_2026") |>
+  filter(!is.na(telework_index)) |>
+  mutate(telework_group = if_else(telework_index >= median(telework_index),
+                                  "High telework index", "Low telework index")) |>
+  group_by(year, telework_group) |>
+  summarise(n_creations = sum(n_creations), .groups = "drop")
+
+ggplot(sirene_groups, aes(x = year, y = n_creations, colour = telework_group)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Business creations by year and remote-work suitability",
+       x = "Year", y = "Number of establishments created", colour = "")
+```
