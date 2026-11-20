@@ -10,6 +10,8 @@ library(readxl)
 library(readr)
 library(arrow)
 library(dplyr)
+library(here)
+library(tidyr)
 ```
 
 ## ARCEP fibre
@@ -53,3 +55,68 @@ sirene <- open_dataset("data/stock-stocketablissement-parquet.parquet") |>
 write_csv(sirene, "data/sirene_creations_by_municipality_year.csv")
 head(sirene)
 ```
+
+
+## DVF
+
+```{r}
+read_dvf <- function(file) {
+  read_csv(here("data", file),
+           col_types = cols(INSEE_COM = col_character()),
+           show_col_types = FALSE
+           )
+}
+
+dvf <- bind_rows(read_dvf("dvf2019.csv"),
+                 read_dvf("dvf2022.csv"),
+                 read_dvf("dvf2023.csv")) |>
+  select(INSEE_COM, Annee, Nb_mutations, PrixMoyen, Prixm2Moyen) |>
+  rename(code_commune = INSEE_COM)
+```
+
+```{r}
+dvf_wide <- dvf |>
+  pivot_wider(names_from = Annee,
+              values_from = c(Nb_mutations, PrixMoyen, Prixm2Moyen))
+
+nrow(dvf_wide)
+ncol(dvf_wide)
+
+sum(is.na(dvf_wide$Prixm2Moyen_2019))
+sum(is.na(dvf_wide$Prixm2Moyen_2022))
+sum(is.na(dvf_wide$Prixm2Moyen_2023))
+```
+
+```{r}
+dvf_growth <- dvf_wide |>
+  mutate(growth_19_22 = (Prixm2Moyen_2022 - Prixm2Moyen_2019) / Prixm2Moyen_2019 * 100,
+         growth_19_23 = (Prixm2Moyen_2023 - Prixm2Moyen_2019) / Prixm2Moyen_2019 * 100,
+         growth_22_23 = (Prixm2Moyen_2023 - Prixm2Moyen_2022) / Prixm2Moyen_2022 * 100)
+
+sum(!is.na(dvf_growth$growth_19_22))
+sum(!is.na(dvf_growth$growth_19_23))
+sum(!is.na(dvf_growth$growth_22_23))
+
+```
+
+```{r}
+summary(dvf_growth$growth_19_22)
+summary(dvf_growth$growth_19_23)
+
+```
+
+```{r}
+for (k in c(3, 5, 10)) {
+  n_22 <- sum(dvf_growth$Nb_mutations_2019 >= k &
+              dvf_growth$Nb_mutations_2022 >= k, na.rm = TRUE)
+  n_23 <- sum(dvf_growth$Nb_mutations_2019 >= k &
+              dvf_growth$Nb_mutations_2023 >= k, na.rm = TRUE)
+  cat("min", k, "sales: ", n_22, "communes (19-22), ", n_23, "communes (19-23)\n")
+}
+
+dvf_growth |>
+  filter(Nb_mutations_2019 >= 5, Nb_mutations_2023 >= 5) |>
+  pull(growth_19_23) |>
+  summary()
+```
+
