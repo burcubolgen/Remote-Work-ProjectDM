@@ -242,6 +242,27 @@ library(here)
 library(tidyr)
 ```
 
+
+### Official Geographical Code (COG)
+
+```{r}
+cog1 <- read_csv(here("data", "cog_2026.csv"),
+                col_types = cols(.default = col_character()),
+                show_col_types = FALSE)
+
+cog_clean <- cog1 |>
+  filter(TYPECOM == "COM", !startsWith(DEP, "97")) |>
+  select(COM, LIBELLE, DEP, REG) |>
+  rename(code_commune = COM)
+
+nrow(cog_clean)
+n_distinct(cog_clean$code_commune)
+all(nchar(cog_clean$code_commune) == 5)
+table(cog_clean$DEP) |>
+  head()
+```
+
+
 ### Municipality codes
 
 ```{r}
@@ -396,6 +417,8 @@ dvf_growth |>
 ### Summary of the cleaning and matching
 
 All sources are linked through the INSEE municipality code. Because French municipalities frequently merge, a code that existed in one year may no longer exist in another. Using the COG correspondence table, we built a list linking every municipality code that existed since 2003 (36716 codes) to its code in 2026 geography (34876 municipalities). Each source was then converted to 2026 codes and the values of merged municipalities were added together.
+
+From the COG file, we only kept the rows of `TYPECOM == "COM"`. This removes the municipal districts of Paris, Lyon and Marseille, and also associated and delegated communes. The analysis is restricted to metropolitan France, thus the overseas communes were also dropped.
 
 For the 2017 census data, 45 codes could not be matched. These were the districts of Paris, Lyon and Marseille, which were listed separately even though the data also included the three cities as a whole. We therefore removed them. The remote-work index could not be calculated for 102 municipalities because they had no declared employed residents.
 
