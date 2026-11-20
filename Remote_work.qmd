@@ -13,27 +13,27 @@ editor: visual
 
 **1) The Official Geopgraphic Code (COG), INSEE**
 
-<https://www.insee.fr/fr/information/8740222> ---> The page offers several files. We downloaded and  the CSV file *Liste des communes* as `m_vmt_commune_2026.csv` and renamed `cog_2026`.
+<https://www.insee.fr/fr/information/8740222> ---\> The page offers several files. We downloaded and the CSV file *Liste des communes* as `m_vmt_commune_2026.csv` and renamed `cog_2026`.
 
-**2) COG correspondence table, INSEE** 
+**2) COG correspondence table, INSEE**
 
-<https://www.insee.fr/fr/information/7671867> ---> We downloaded the file *Table de passage annuelle 2026*.
+<https://www.insee.fr/fr/information/7671867> ---\> We downloaded the file *Table de passage annuelle 2026*.
 
 **3) Historical municipal populations, INSEE**
 
-<https://www.insee.fr/fr/statistiques/3698339> ---> We downloaded the XLSX file and exported the first sheet, which contains the population data, as a semicolon-separated CSV file, saved as `population_historique.csv`.
+<https://www.insee.fr/fr/statistiques/3698339> ---\> We downloaded the XLSX file and exported the first sheet, which contains the population data, as a semicolon-separated CSV file, saved as `population_historique.csv`.
 
 **4) ARCEP fiber deployment**
 
-<https://www.data.gouv.fr/fr/datasets/le-marche-du-haut-et-tres-haut-debit-fixe-deploiements/> ---> We downloaded the file `2026t2-obs-hd-thd-deploiement-vf.xlsx` (second quarter of 2026) and kept only the sheet *Communes*. 
+<https://www.data.gouv.fr/fr/datasets/le-marche-du-haut-et-tres-haut-debit-fixe-deploiements/> ---\> We downloaded the file `2026t2-obs-hd-thd-deploiement-vf.xlsx` (second quarter of 2026) and kept only the sheet *Communes*.
 
 **5) List of train stations**
 
-<https://www.data.gouv.fr/datasets/liste-des-gares?resource_id=d22ba593-90a4-4725-977c-095d1f654d28>  
+<https://www.data.gouv.fr/datasets/liste-des-gares?resource_id=d22ba593-90a4-4725-977c-095d1f654d28>
 
 **6) Employment of active residents, INSEE**
 
-<https://www.insee.fr/fr/statistiques/4515500> ---> Downloaded the CSV file *Emploi - population active en 2017 - Commune - France hors Mayotte* and kept the municipality code and the number of employed residents aged 15–64 by socio-professional category (variables `C17_ACTOCC1564...`).
+<https://www.insee.fr/fr/statistiques/4515500> ---\> Downloaded the CSV file *Emploi - population active en 2017 - Commune - France hors Mayotte* and kept the municipality code and the number of employed residents aged 15–64 by socio-professional category (variables `C17_ACTOCC1564...`).
 
 **7) Real estate indicators by municipality and by year (prices and volumes for the 2014–2024 period)**
 
@@ -45,9 +45,7 @@ editor: visual
 
 **8) Business' and their establishment, SIRENE**
 
-<https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/> ---> Downloaded the file *Sirene : Fichier StockEtablissement – 01 novembre 2026 (format parquet)* and counted the establishments created in each municipality and year since 2014.
-
-
+<https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/> ---\> Downloaded the file *Sirene : Fichier StockEtablissement – 01 novembre 2026 (format parquet)* and counted the establishments created in each municipality and year since 2014.
 
 ## Description of the sources
 
@@ -61,13 +59,11 @@ INSEE (Institut national de la statistique et des études économiques) is the F
 
 - “Activité des résidents” describes the occupation sector and the activity of residents in each commune before COVID-19 pandemic. We use it to measure the share of teleworkable occupations, which is one of the indicators of a commune’s suitability for remote work.
 
-ARCEP is the French regulatory authority in charge of regulating telecommunications, postal services and print media distribution in France. It provides the dataset on fixed broadband deployment, which gives the number of premises connectable to fibre in each commune at the end of 2019. The quality of digital infrastructure is used as our second indicator of remote work suitability.
-For our third indicator of remote work suitability, we use the list of train stations, provided by SNCF. The quality of the transport infrastructure is identified through communes with rail road access.
+ARCEP is the French regulatory authority in charge of regulating telecommunications, postal services and print media distribution in France. It provides the dataset on fixed broadband deployment, which gives the number of premises connectable to fibre in each commune at the end of 2019. The quality of digital infrastructure is used as our second indicator of remote work suitability. For our third indicator of remote work suitability, we use the list of train stations, provided by SNCF. The quality of the transport infrastructure is identified through communes with rail road access.
 
 The real estate market is captured by the dataset “Indicateurs immobiliers par commune et par année”. This dataset contains property transaction records for each year from 2014 to 2024, and provides information such as property transfer dates, sale values and average price per square meter of properties sold. In our project, we work on three years: 2019 as the pre-pandemic reference, 2022 and 2023 as the post-pandemic period. This allows us to study the evolution of housing prices at the municipal level after the COVID-19 pandemic.
 
 The business creation dataset provided by SIRENE lists all of the French establishments with their creation date and their commune code. We use this data to count the establishments created in each commune over different periods to obtain a measure of local economic dynamism before and after the pandemic.
-
 
 ## Data information tables
 
@@ -95,6 +91,22 @@ tibble(
   kable(caption = "cog_2026.csv information table")
 ```
 
+#### COG correspondence table
+
+```{r}
+#| message: false
+path_cog <- here("data", "cog_table_passage_2026.csv")
+cog_raw <- read_csv(path_cog, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_cog),
+            format(nrow(cog_raw), big.mark = " "),
+            as.character(ncol(cog_raw)))
+) |>
+  kable(caption = "COG correspondence table information table")
+```
+
 #### Historical municipal populations
 
 ```{r}
@@ -111,6 +123,21 @@ tibble(
   kable(caption = "Historical municipal populations data information table")
 ```
 
+#### ARCEP fibre
+
+```{r}
+#| message: false
+path_fibre <- here("data", "arcep_fibre_communes.csv")
+fibre_raw <- read_csv(path_fibre, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_fibre),
+            format(nrow(fibre_raw), big.mark = " "),
+            as.character(ncol(fibre_raw)))
+) |>
+  kable(caption = "ARCEP fibre deployment data information table")
+```
 
 #### Train stations
 
@@ -128,6 +155,21 @@ tibble(
   kable(caption = "Train stations data information table")
 ```
 
+#### Census 2017
+
+```{r}
+#| message: false
+path_rp <- here("data", "rp2017_emploi_commune.csv")
+rp_raw <- read_csv(path_rp, show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_rp),
+            format(nrow(rp_raw), big.mark = " "),
+            as.character(ncol(rp_raw)))
+) |>
+  kable(caption = "Census 2017 employment data information table")
+```
 
 #### DVF
 
@@ -173,62 +215,7 @@ tibble(
   kable(caption = "DVF 2023 data information table")
 ```
 
-
-## Data files
-
-```{r}
-library(readr)
-library(dplyr)
-```
-
-### ARCEP fibre
-
-```{r}
-#| message: false
-path_fibre <- here("data", "arcep_fibre_communes.csv")
-fibre_raw <- read_csv(path_fibre, show_col_types = FALSE)
-
-tibble(
-  Information = c("File name", "Number of rows", "Number of columns"),
-  Value = c(basename(path_fibre),
-            format(nrow(fibre_raw), big.mark = " "),
-            as.character(ncol(fibre_raw)))
-) |>
-  kable(caption = "ARCEP fibre deployment data information table")
-```
-
-### COG correspondence table
-
-```{r}
-#| message: false
-path_cog <- here("data", "cog_table_passage_2026.csv")
-cog_raw <- read_csv(path_cog, show_col_types = FALSE)
-
-tibble(
-  Information = c("File name", "Number of rows", "Number of columns"),
-  Value = c(basename(path_cog),
-            format(nrow(cog_raw), big.mark = " "),
-            as.character(ncol(cog_raw)))
-) |>
-  kable(caption = "COG correspondence table information table")
-```
-### Census 2017
-
-```{r}
-#| message: false
-path_rp <- here("data", "rp2017_emploi_commune.csv")
-rp_raw <- read_csv(path_rp, show_col_types = FALSE)
-
-tibble(
-  Information = c("File name", "Number of rows", "Number of columns"),
-  Value = c(basename(path_rp),
-            format(nrow(rp_raw), big.mark = " "),
-            as.character(ncol(rp_raw)))
-) |>
-  kable(caption = "Census 2017 employment data information table")
-```
-
-### Sirene
+#### Sirene
 
 ```{r}
 #| message: false
@@ -247,8 +234,11 @@ tibble(
 ## Data cleaning
 
 ```{r}
+library(readxl)
 library(readr)
+library(arrow)
 library(dplyr)
+library(here)
 library(tidyr)
 ```
 
@@ -342,6 +332,67 @@ sirene |>
   head(10)
 ```
 
+
+### DVF
+
+```{r}
+read_dvf <- function(file) {
+  read_csv(here("data", file),
+           col_types = cols(INSEE_COM = col_character()),
+           show_col_types = FALSE
+           )
+}
+
+dvf <- bind_rows(read_dvf("dvf2019.csv"),
+                 read_dvf("dvf2022.csv"),
+                 read_dvf("dvf2023.csv")) |>
+  select(INSEE_COM, Annee, Nb_mutations, PrixMoyen, Prixm2Moyen) |>
+  rename(code_commune = INSEE_COM)
+```
+
+```{r}
+dvf_wide <- dvf |>
+  pivot_wider(names_from = Annee,
+              values_from = c(Nb_mutations, PrixMoyen, Prixm2Moyen))
+
+nrow(dvf_wide)
+ncol(dvf_wide)
+
+sum(is.na(dvf_wide$Prixm2Moyen_2019))
+sum(is.na(dvf_wide$Prixm2Moyen_2022))
+sum(is.na(dvf_wide$Prixm2Moyen_2023))
+```
+
+```{r}
+dvf_growth <- dvf_wide |>
+  mutate(growth_19_22 = (Prixm2Moyen_2022 - Prixm2Moyen_2019) / Prixm2Moyen_2019 * 100,
+         growth_19_23 = (Prixm2Moyen_2023 - Prixm2Moyen_2019) / Prixm2Moyen_2019 * 100)
+
+sum(!is.na(dvf_growth$growth_19_22))
+sum(!is.na(dvf_growth$growth_19_23))
+```
+
+```{r}
+summary(dvf_growth$growth_19_22)
+summary(dvf_growth$growth_19_23)
+```
+
+```{r}
+for (k in c(3, 5, 10)) {
+  n_22 <- sum(dvf_growth$Nb_mutations_2019 >= k &
+              dvf_growth$Nb_mutations_2022 >= k, na.rm = TRUE)
+  n_23 <- sum(dvf_growth$Nb_mutations_2019 >= k &
+              dvf_growth$Nb_mutations_2023 >= k, na.rm = TRUE)
+  cat("min", k, "sales: ", n_22, "communes (19-22), ", n_23, "communes (19-23)\n")
+}
+
+dvf_growth |>
+  filter(Nb_mutations_2019 >= 5, Nb_mutations_2023 >= 5) |>
+  pull(growth_19_23) |>
+  summary()
+```
+
+
 ### Summary of the cleaning and matching
 
 All sources are linked through the INSEE municipality code. Because French municipalities frequently merge, a code that existed in one year may no longer exist in another. Using the COG correspondence table, we built a list linking every municipality code that existed since 2003 (36716 codes) to its code in 2026 geography (34876 municipalities). Each source was then converted to 2026 codes and the values of merged municipalities were added together.
@@ -350,27 +401,40 @@ For the 2017 census data, 45 codes could not be matched. These were the district
 
 For ARCEP fiber data, only 4 codes could not be matched. AT the end of 2019, more than half of the municipalities had no premises connected to fiber. This means that the fiber shared is often zero. For this reason, we could also use a simple indicator showing whether fiber was available or not.
 
-In the SIRENE data , establishments in Paris, Lyon and Marseille were identified by district. We assigned these districts to their respective cities to make the data consistent with the other sources. The other unmatched codes, representing around 27986new establishments, belong to overseas territories that are not included in the COG municipality list. These territories were excluded from the study. 
-Finally, we removed 2026, because the data for this year is incomplete.
+For the DVF files, we stacked the three yearly files (2019, 2022, 2023), kept the commune code, year, number of sales and average price(total and per square meter), and reshaped the table to a wider format with one row per commune and one column per variable and year (e.g. `Prixm2Moyen_2019`). We computed the growth of the price per square meter from 2019 to 2022 and to 2023. To avoid extreme values caused by really few sales, only communes with at least five sales in both years are used.
+
+In the SIRENE data , establishments in Paris, Lyon and Marseille were identified by district. We assigned these districts to their respective cities to make the data consistent with the other sources. The other unmatched codes, representing around 27986new establishments, belong to overseas territories that are not included in the COG municipality list. These territories were excluded from the study. Finally, we removed 2026, because the data for this year is incomplete.
 
 ## Main variables
 
 - `code_2026`: the INSEE code of municipality in 2026. This code is used to connect all the date from different sources.
+
 - `employed_2017`: the number of people aged 15 to 64 who had a job in the municipality in 2017.
+
 - `managers_interm_2017`: the number of employed people who were managers or had intermediate-level jobs in 2017. These types of jobs are more likely to allow remote work.
+
 - `telework_index`: the percentage of employed people who were managers or had intermediate-level jobs in 2017. It shows how suitable the municipality was for remote work before the pandemic.
+
 - `premises_2026`: the estimated total number of premises (homes and business buildings) in the municipality, according to ARCEP.
+
 - `fibre_premises_2019`: the number of premises that had access to fiber broadband at the end of 2019.
+
 - `fibre_share_2019`: the percentage of premises that could access fiber broadband in 2019. It shows how easy it was to work remotely from that municipality before the pandemic.
+
 - `year`: the year when we establishments were created, between 2014 and 2025.
+
 - `n_creations`: the number of the new establishments created in the municipality each year, based on data from the SIRENE register.
 
-
 - `COM`: The INSEE code of municipality in 2026. It is the key used to join this file with the others.
+
 - `LIBELLE`: name of the commune
+
 - `PMUN2019`, `PMUN2022`, `PMUN2023`: Municipal population of the commune at the census year given in the column name.
+
 - `FRET`: Indicates whether the station is open to passenger traffic (O = yes, N = no). Used to keep only stations that serve passengers.
+
 - `Nb_mutations`: Number of property sales recorded in the commune during the year.
+
 - `Prixm2Moyen`: Average sale price per square meter, in euros.
 
 ## Research question
