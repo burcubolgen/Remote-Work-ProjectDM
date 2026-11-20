@@ -365,6 +365,14 @@ Finally, we removed 2026, because the data for this year is incomplete.
 - `year`: the year when we establishments were created, between 2014 and 2025.
 - `n_creations`: the number of the new establishments created in the municipality each year, based on data from the SIRENE register.
 
+
+- `COM`: The INSEE code of municipality in 2026. It is the key used to join this file with the others.
+- `LIBELLE`: name of the commune
+- `PMUN2019`, `PMUN2022`, `PMUN2023`: Municipal population of the commune at the census year given in the column name.
+- `FRET`: Indicates whether the station is open to passenger traffic (O = yes, N = no). Used to keep only stations that serve passengers.
+- `Nb_mutations`: Number of property sales recorded in the commune during the year.
+- `Prixm2Moyen`: Average sale price per square meter, in euros.
+
 ## Research question
 
 Did small French municipalities that were better suited to remote work before the pandemic experience stronger population growth, faster housing price increases and more business creation after COVID-19 than otherwise comparable municipalities?
