@@ -13,7 +13,7 @@ editor: visual
 
 **1) The Official Geopgraphic Code (COG), INSEE**
 
-<https://www.insee.fr/fr/information/8740222> ---\> The page offers several files. We downloaded and the CSV file *Liste des communes* as `m_vmt_commune_2026.csv` and renamed `cog_2026`.
+<https://www.insee.fr/fr/information/8740222> ---\> The page offers several files. We downloaded the CSV files *Liste des communes* and *Liste des départements*, and renamed them as `cog_2026` and `departement_2026.csv`.
 
 **2) COG correspondence table, INSEE**
 
@@ -91,6 +91,20 @@ tibble(
   kable(caption = "cog_2026.csv information table")
 ```
 
+```{r}
+path_dep <- here("data", "departement_2026.csv")
+dep <- read_csv(path_dep, col_types = cols(.default = col_character()),
+                show_col_types = FALSE)
+
+tibble(
+  Information = c("File name", "Number of rows", "Number of columns"),
+  Value = c(basename(path_dep),
+            format(nrow(dep), big.mark = " "),
+            as.character(ncol(dep)))
+) |>
+  kable(caption = "Departments data information table")
+```
+
 #### COG correspondence table
 
 ```{r}
@@ -144,7 +158,7 @@ tibble(
 ```{r}
 #| message: false
 path_gares <- here("data", "gares.csv")
-gares <- read_csv2(path_gares, show_col_types = FALSE)
+gares <- read_delim(path_gares, show_col_types = FALSE)
 
 tibble(
   Information = c("File name", "Number of rows", "Number of columns"),
@@ -234,6 +248,7 @@ tibble(
 ## Data cleaning
 
 ```{r}
+#| include: false
 library(readxl)
 library(readr)
 library(arrow)
@@ -341,6 +356,49 @@ telework_2017 <- rp2017 |>
 rp2017 |> anti_join(cog_map, by = c("CODGEO" = "old_code")) |> nrow()
 summary(telework_2017$telework_index)
 ```
+
+
+### Train stations
+
+```{r}
+library(stringr)
+library(stringi)
+
+# Simplifying the names
+clean_key <- function(x) {
+  x |>
+    stri_trans_general("Latin-ASCII") |>
+    toupper() |>
+    str_replace_all("[^A-Z0-9]+", " ") |>
+    str_squish()
+}
+
+
+dep_key <- dep |>
+  mutate(dep_key = clean_key(NCCENR)) |>
+  select(DEP, dep_key)
+
+gares_keyed <- gares |>
+  filter(VOYAGEURS == "O") |>
+  mutate(commune_key = clean_key(COMMUNE),
+         dep_key = clean_key(DEPARTEMEN)) |>
+  left_join(dep_key, by = "dep_key")
+
+cog_keys <- cog_clean |>
+  mutate(commune_key = clean_key(LIBELLE)) |>
+  select(code_commune, commune_key, DEP)
+
+gares_unique <- gares_keyed |>
+  left_join(cog_keys, by = c("commune_key", "DEP")) |>
+  distinct(CODE_UIC, .keep_all = TRUE)
+```
+
+
+```{r}
+nrow(gares_unique)                        
+sum(is.na(gares_unique$code_commune))
+```
+
 
 ### ARCEP fibre
 
@@ -464,6 +522,8 @@ From the COG file, we only kept the rows of `TYPECOM == "COM"`. This removes the
 For the municipal populations, we computed growth over six-year periods, because INSEE advises comparing census results over at least five years. The table was then joined to the COG list. All communes are matched except Paris, which is split into 20 districts in the population file.
 
 For the 2017 census data, 45 codes could not be matched. These were the districts of Paris, Lyon and Marseille, which were listed separately even though the data also included the three cities as a whole. We therefore removed them. The remote-work index could not be calculated for 102 municipalities because they had no declared employed residents.
+
+The train stations data file had no commune code, so we matched the stations to the COG using both the commune and department names. Names then were harmonised (accents removed, capital letters, punctuation replaced by spaces). We kept only stations open to passengers. 26 stations could not be matched and were left out. The remaining stations were counted by commune, which gives the number of stations and an indicator of whether the commune has at least one station.
 
 For ARCEP fiber data, only 4 codes could not be matched. AT the end of 2019, more than half of the municipalities had no premises connected to fiber. This means that the fiber shared is often zero. For this reason, we could also use a simple indicator showing whether fiber was available or not.
 
