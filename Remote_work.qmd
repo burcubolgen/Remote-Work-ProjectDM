@@ -633,7 +633,7 @@ commune_graph <- commune_full |>
 
 ```{r}
 pop_plot_data <- commune_graph |>
-  filter(PMUN2017 < 5000, !is.na(telework_group)) |>
+  filter(PMUN2017 < 10000, !is.na(telework_group)) |>
   select(telework_group, growth_11_17, growth_17_23) |>
   pivot_longer(c(growth_11_17, growth_17_23),
                names_to = "period", values_to = "growth") |>
@@ -645,20 +645,32 @@ ggplot(pop_plot_data, aes(x = telework_group, y = growth)) +
   geom_boxplot(outlier.shape = NA) +
   facet_wrap(~ period) +
   coord_cartesian(ylim = c(-30, 40)) +
-  labs(title = "Population growth in small communes (< 5,000 inhabitants)",
+  labs(title = "Population growth in small communes (< 10 000 inhabitants)",
        x = NULL, y = "Population growth over six years (%)")
 ```
 
 ### Real estate market
 ```{r}
 price_plot_data <- commune_graph |>
-  filter(PMUN2017 < 5000, !is.na(telework_group),
+  filter(PMUN2017 < 10000, !is.na(telework_group),
          Nb_mutations_2019 >= 5, Nb_mutations_2023 >= 5)
 
 ggplot(price_plot_data, aes(x = telework_group, y = growth_19_23)) +
   geom_boxplot(outlier.shape = NA) +
   coord_cartesian(ylim = c(-30, 100)) +
-  labs(title = "Price per m² growth 2019-2023, small communes (< 5,000 inhabitants)",
+  labs(title = "Price per m² growth 2019-2023, small communes (< 10 000 inhabitants)",
        x = NULL, y = "Growth in price per m² (%)")
+```
+
+```{r}
+pop_plot_data |>
+  group_by(period, telework_group) |>
+  summarise(median_growth = median(growth, na.rm = TRUE),
+            n = n(), .groups = "drop")
+
+price_plot_data |>
+  group_by(telework_group) |>
+  summarise(median_growth = median(growth_19_23, na.rm = TRUE),
+            n = n(), .groups = "drop")
 ```
 
