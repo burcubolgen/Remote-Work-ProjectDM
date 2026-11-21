@@ -391,6 +391,15 @@ cog_keys <- cog_clean |>
 gares_unique <- gares_keyed |>
   left_join(cog_keys, by = c("commune_key", "DEP")) |>
   distinct(CODE_UIC, .keep_all = TRUE)
+
+stations_commune <- gares_unique |>
+  filter(!is.na(code_commune)) |>
+  count(code_commune, name = "n_stations")
+
+commune_full <- commune |>
+  left_join(stations_commune, by = "code_commune") |>
+  mutate(n_stations = coalesce(n_stations, 0L),
+         has_station = n_stations > 0)
 ```
 
 
@@ -601,3 +610,55 @@ ggplot(sirene_groups, aes(x = year, y = n_creations, colour = telework_group)) +
   labs(title = "Business creations by year and remote-work suitability",
        x = "Year", y = "Number of establishments created", colour = "")
 ```
+
+
+### Population growth
+
+```{r}
+telework_groups <- telework_2017 |>
+  filter(!is.na(telework_index)) |>
+  mutate(telework_group = if_else(telework_index >= median(telework_index),
+                                  "High telework index", "Low telework index"),
+         telework_group = factor(telework_group,
+                                 levels = c("Low telework index", "High telework index"))) |>
+  select(code_commune = code_2026, telework_group)
+
+commune_graph <- commune_full |>
+  left_join(dvf_growth |>
+              select(code_commune, growth_19_22, growth_19_23,
+                     Nb_mutations_2019, Nb_mutations_2022, Nb_mutations_2023),
+            by = "code_commune") |>
+  left_join(telework_groups, by = "code_commune")
+```
+
+```{r}
+pop_plot_data <- commune_graph |>
+  filter(PMUN2017 < 5000, !is.na(telework_group)) |>
+  select(telework_group, growth_11_17, growth_17_23) |>
+  pivot_longer(c(growth_11_17, growth_17_23),
+               names_to = "period", values_to = "growth") |>
+  mutate(period = recode(period,
+                         growth_11_17 = "2011-2017 (before COVID)",
+                         growth_17_23 = "2017-2023 (after COVID)"))
+
+ggplot(pop_plot_data, aes(x = telework_group, y = growth)) +
+  geom_boxplot(outlier.shape = NA) +
+  facet_wrap(~ period) +
+  coord_cartesian(ylim = c(-30, 40)) +
+  labs(title = "Population growth in small communes (< 5,000 inhabitants)",
+       x = NULL, y = "Population growth over six years (%)")
+```
+
+### Real estate market
+```{r}
+price_plot_data <- commune_graph |>
+  filter(PMUN2017 < 5000, !is.na(telework_group),
+         Nb_mutations_2019 >= 5, Nb_mutations_2023 >= 5)
+
+ggplot(price_plot_data, aes(x = telework_group, y = growth_19_23)) +
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim = c(-30, 100)) +
+  labs(title = "Price per m² growth 2019-2023, small communes (< 5,000 inhabitants)",
+       x = NULL, y = "Growth in price per m² (%)")
+```
+
