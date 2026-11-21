@@ -283,6 +283,47 @@ nrow(cog_map)
 n_distinct(cog_map$code_2026)
 ```
 
+
+### Historical municipal populations
+
+```{r}
+pop <- read_csv2(here("data", "population_historique.csv"), skip = 5,
+                 col_types = cols(.default = col_number(),
+                                  CODGEO = col_character(),
+                                  REG = col_character(),
+                                  DEP = col_character(),
+                                  LIBGEO = col_character()),
+                 show_col_types = FALSE)
+
+pop_clean <- pop |>
+  filter(!is.na(CODGEO)) |>
+  select(CODGEO, LIBGEO, PMUN2011, PMUN2017, PMUN2023) |>
+  rename(code_commune = CODGEO) |>
+  mutate(growth_11_17 = (PMUN2017 - PMUN2011) / PMUN2011 * 100,
+         growth_17_23 = (PMUN2023 - PMUN2017) / PMUN2017 * 100)
+
+
+nrow(pop_clean)
+n_distinct(pop_clean$code_commune)
+all(nchar(pop_clean$code_commune) == 5)
+summary(pop_clean$growth_17_23)
+sum(is.na(pop_clean$PMUN2017))
+
+anti_join(pop_clean, cog_clean, by = "code_commune") |> nrow()
+anti_join(cog_clean, pop_clean, by = "code_commune") |> nrow()
+```
+
+```{r}
+commune <- cog_clean |>
+  left_join(pop_clean |> select(-LIBGEO), by = "code_commune")
+
+nrow(commune)                         
+sum(is.na(commune$PMUN2017))          
+sum(is.na(commune$growth_17_23))       
+commune |> filter(is.na(PMUN2017))
+```
+
+
 ### Census 2017
 
 ```{r}
@@ -419,6 +460,8 @@ dvf_growth |>
 All sources are linked through the INSEE municipality code. Because French municipalities frequently merge, a code that existed in one year may no longer exist in another. Using the COG correspondence table, we built a list linking every municipality code that existed since 2003 (36716 codes) to its code in 2026 geography (34876 municipalities). Each source was then converted to 2026 codes and the values of merged municipalities were added together.
 
 From the COG file, we only kept the rows of `TYPECOM == "COM"`. This removes the municipal districts of Paris, Lyon and Marseille, and also associated and delegated communes. The analysis is restricted to metropolitan France, thus the overseas communes were also dropped.
+
+For the municipal populations, we computed growth over six-year periods, because INSEE advises comparing census results over at least five years. The table was then joined to the COG list. All communes are matched except Paris, which is split into 20 districts in the population file.
 
 For the 2017 census data, 45 codes could not be matched. These were the districts of Paris, Lyon and Marseille, which were listed separately even though the data also included the three cities as a whole. We therefore removed them. The remote-work index could not be calculated for 102 municipalities because they had no declared employed residents.
 
